@@ -6,7 +6,7 @@ const roles = require('./roles');
 const employees = require('./employees')
 
 router.use('/departments', departments);
-// router.use('/roles',roles);
-// router.use('/employees',employees);
+router.use('/roles',roles);
+router.use('/employees',employees);
 
 module.exports = router;
