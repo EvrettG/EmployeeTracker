@@ -8,7 +8,8 @@ departments.get('/', (req,res)=>{
         if (err) {
           console.error('Error executing query', err.stack);
         } else {
-          console.log('Query result:', res.rows);
+          console.log('Query result:');
+          console.table(res.rows)
         }
         pool.end(); // Close the pool when done
       });
