@@ -11,10 +11,27 @@ departments.get('/', (req,res)=>{
           console.log('Query result:');
           console.table(res1.rows);
         //   Note following code is for insomina to stop timeouts, comment out before final push
-          res.json("Reults returned succefully");
+          res.json("Reults from departments returned succefully");
         }
       });
 })
 
+departments.post('/',async (req,res)=>{
+  const{department_name} = req.body;
+
+  if(!department_name){
+    return res.status(400).send('Department name is required');
+  }
+  try {
+    const newDepartment = await pool.query(
+      'INSERT INTO departments (department_name) VALUES ($1) RETURNING *',
+      [department_name]
+    );
+    res.status(201).json(newDepartment.rows[0]);
+  } catch (error) {
+    console.error('Error executing query', error.stack);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = departments
