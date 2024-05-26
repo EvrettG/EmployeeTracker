@@ -10,7 +10,7 @@ function isDecimal(value) {
 
 // This function once reciving a get request 
 roles.get('/', (req,res)=>{ 
-    pool.query('SELECT * FROM roles', (err, res1) => {
+    pool.query('SELECT roles.id, roles.title, roles.salary, departments.department_name AS department FROM roles JOIN departments ON roles.department_id = departments.id', (err, res1) => {
         if (err) {
           console.error('Error executing query', err.stack);
         } else {
@@ -43,5 +43,29 @@ roles.post('/', async (req,res)=>{
     res.status(500).send('Server error');
   }
 })
+
+// this is the delete call for roles based on id
+roles.delete('/:id', async (req, res)=>{
+  // gets id from call and places it into a const
+  const {id} = req.params;
+  // Checks if id is a number and abourts function if it isnt
+  if (isNaN(id)){
+    return res.status(400).send('ID must be a valid number');
+  }
+  // attempts to perform the function
+  try {
+    const result = await pool.query(
+      'DELETE FROM roles WHERE id = $1 RETURNING *',
+      [id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).send('Department not found');
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error executing query', error.stack);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = roles
