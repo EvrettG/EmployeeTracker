@@ -16,7 +16,7 @@ departments.get('/', (req,res)=>{
       });
 })
 
-
+// post route for departments requiring a department_name in a json body
 departments.post('/',async (req,res)=>{
   const{department_name} = req.body;
   // checks if department_name exists
@@ -35,13 +35,15 @@ departments.post('/',async (req,res)=>{
     res.status(500).send('Server error');
   }
 });
-
+// this is the delete call for departments based on id
 departments.delete('/:id', async (req, res)=>{
+  // gets id from call and places it into a const
   const {id} = req.params;
+  // Checks if id is a number and abourts function if it isnt
   if (isNaN(id)){
     return res.status(400).send('ID must be a valid number');
   }
-
+  // attempts to perform the function
   try {
     const result = await pool.query(
       'DELETE FROM departments WHERE id = $1 RETURNING *',
