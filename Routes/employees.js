@@ -75,5 +75,30 @@ employees.delete('/:id', async (req, res)=>{
     res.status(500).send('Server error');
   }
 });
+// patch function to update who an employee's manager is. Note patch instead of put as put is for upadating entire row
+employees.patch('/:id', async (req, res) => {
+  // get's the id for employee being updates from the parameters while the manager id is sent via the body.
+  // TODO test if it's possible to reverse the order to make the same changes and seek clarification on which is perfered
+  const employeeId = req.params.id;
+  const { manager_id } = req.body;
+  // Checks if manager id is either a number or null
+  if (typeof manager_id !== 'number' && manager_id !== null) {
+    return res.status(400).json({ error: 'Manager ID must be a number or null' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE employees SET manager_id = $1 WHERE id = $2 RETURNING *',
+      [manager_id, employeeId]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error executing query', error.stack);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = employees
