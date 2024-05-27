@@ -21,7 +21,7 @@ employees.get('/', (req,res)=>{
           console.log('Query result:');
           console.table(res1.rows);
         //   Note following code is for insomina to stop timeouts, comment out before final push
-          res.json("Reults returned succefully");
+          res.json(res1.rows);
         }
       });
 });
