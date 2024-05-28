@@ -28,7 +28,7 @@ roles.post('/', async (req,res)=>{
   if (!title || !salary || !department_id){
     return res.status(400).send('All fields (title, salary, department_id) are required');
   }
-  if (!isDecimal(salary)) {
+  if (isDecimal(salary)) {
     return res.status(400).send('Salary must be a valid decimal number');
   }
   // Attempts to insert a new role or alert of failure

@@ -6,6 +6,7 @@ function quit(){
     process.exit();
 }
 
+
 const mainMenu = [
     {
         type: 'list',
@@ -16,7 +17,7 @@ const mainMenu = [
         {name: 'view all roles', value: viewRoles},
         {name: 'View all employees', value: viewEmployees},
         {name: 'Add Department', value: addDepartment},
-        {name: 'Add role', value:`addRole`},
+        {name: 'Add role', value: addRole},
         {name: 'Add employee', value:`addEmployee`},
         {name: 'Update employees manager', value:`updateManager`},
         {name: 'Delete department', value:`deleteDepatment`},
@@ -32,6 +33,38 @@ const departmentAdd = [
     type: 'input',
     message: 'Please enter the new department name',
     name: 'department_name'
+  }
+]
+
+const roleAdd = [
+  {
+    type: 'input',
+    message: 'Please enter the new role title',
+    name: 'title'
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new role salary, Must be a number',
+    name: 'salary',
+    validate:  (salary) => {
+      if (!isNaN(salary)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }
+    }
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new role department id',
+    name: 'department_id',
+    validate:  (department_id) => {
+      if (!isNaN(department_id)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }
+    }
   }
 ]
 
@@ -78,7 +111,7 @@ fetch(`${apiCall}/api/employees`, {
   })
   .catch(error => console.error('Error:', error));
 }
-
+// Function to add a department
 function addDepartment(){
   inquirer.prompt(departmentAdd).then((data)=>
   fetch(`${apiCall}/api/departments`,{
@@ -94,8 +127,26 @@ function addDepartment(){
   .catch(error => console.error('Error:', error));
 }
 
-function addRole(){
-  inquirer.prompt().then((data)=>)
+
+function addRole() {
+  inquirer.prompt(roleAdd)
+    .then((data) => {
+      // Convert salary and department_id to numbers
+      data.salary = parseFloat(data.salary);
+      data.department_id = parseInt(data.department_id, 10);
+
+      return fetch(`${apiCall}/api/roles`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.table(data);
+      init(); // Re-prompt the main menu after handling the response
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 // change name later
