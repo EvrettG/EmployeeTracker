@@ -6,54 +6,7 @@ function quit(){
     process.exit();
 }
 
-function viewDepartments(){
-    fetch(`${apiCall}/api/departments`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(data => {
-            console.table(data);
-          init(); // Re-prompt the mainMenu after handling the response
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function viewRoles(){
-    fetch(`${apiCall}/api/roles`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-      .then(data => {
-        console.table(data);
-        init(); // Re-prompt the mainMenu after handling the response
-      })
-      .catch(error => console.error('Error:', error));
-    }
-
-function viewEmployees(){
-fetch(`${apiCall}/api/employees`, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-    }).then(response => response.json())
-    .then(data => {
-        console.table(data);
-      init(); // Re-prompt the mainMenu after handling the response
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function addDepartment(){
-    console.log('test')
-    init();
-}
-
-const mainMenu=[
+const mainMenu = [
     {
         type: 'list',
         message: 'Please slect an option',
@@ -74,6 +27,76 @@ const mainMenu=[
     }
 ]
 
+const departmentAdd = [
+  {
+    type: 'input',
+    message: 'Please enter the new department name',
+    name: 'department_name'
+  }
+]
+
+
+
+function viewDepartments(){
+  fetch(`${apiCall}/api/departments`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(data => {
+          console.table(data);
+        init(); // Re-prompt the mainMenu after handling the response
+      })
+      .catch(error => console.error('Error:', error));
+}
+
+function viewRoles(){
+  fetch(`${apiCall}/api/roles`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+    .then(data => {
+      console.table(data);
+      init(); // Re-prompt the mainMenu after handling the response
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+function viewEmployees(){
+fetch(`${apiCall}/api/employees`, {
+  method: 'GET',
+  headers: {
+      'Content-Type': 'application/json'
+  }
+  }).then(response => response.json())
+  .then(data => {
+      console.table(data);
+    init(); // Re-prompt the mainMenu after handling the response
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function addDepartment(){
+  inquirer.prompt(departmentAdd).then((data)=>
+  fetch(`${apiCall}/api/departments`,{
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  ).then(response => response.json())
+  .then(data => {
+      console.table(data);
+    init(); // Re-prompt the mainMenu after handling the response
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function addRole(){
+  inquirer.prompt().then((data)=>)
+}
 
 // change name later
 function init(){
