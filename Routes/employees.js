@@ -76,7 +76,7 @@ employees.delete('/:id', async (req, res)=>{
   }
 });
 // patch function to update who an employee's manager is. Note patch instead of put as put is for upadating entire row
-employees.patch('/:id', async (req, res) => {
+employees.patch('/:id/manager', async (req, res) => {
   const employeeId = parseInt(req.params.id, 10);
   const { manager_id } = req.body;
   // get's the id for employee being updates from the parameters while the manager id is sent via the body.
@@ -101,5 +101,26 @@ employees.patch('/:id', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+employees.patch('/:id/role',async (req, res)=>{
+  const { role_id } = req.body;
+  const employeeId = parseInt(req.params.id, 10);
+  if (isNaN(role_id)){
+    return res.status(400).send('ID must be a valid number');
+  }
+  try {
+    const result = await pool.query(
+      'UPDATE employees SET role_id = $1 WHERE id = $2 RETURNING *',
+      [role_id, employeeId]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error executing query', error.stack);
+    res.status(500).send('Server error');
+  }
+})
 
 module.exports = employees

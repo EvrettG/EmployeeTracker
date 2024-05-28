@@ -19,6 +19,7 @@ const mainMenu = [
         {name: 'Add Department', value: addDepartment},
         {name: 'Add role', value: addRole},
         {name: 'Add employee', value: addEmployee},
+        {name: 'Update employees role', value: updateRole},
         {name: 'Update employees manager', value: updateManager},
         {name: 'Delete department', value:deleteDepartment},
         {name: 'Delete role', value:deleteRole},
@@ -134,6 +135,36 @@ const managerUpdate = [
         return 'You must enter a number or leave blank';
       }
     }
+  }
+]
+
+const roleUpdate = [
+  {
+    type: 'input',
+    message: 'Please enter the id of the employee you want to update',
+    name: 'id',
+    validate: (id) => {
+      if (!isNaN(id)) {
+        return true;
+      } else {
+        return 'You must enter a number only';
+      }
+    },
+    filter: (input) => parseInt(input, 10) // Ensure ID is an integer
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new role id',
+    name: 'role_id',
+    filter: (input) => input.trim() === '' ? null : parseInt(input, 10),
+    validate: (id) => {
+      if (!isNaN(id)) {
+        return true;
+      } else {
+        return 'You must enter a number only';
+      }
+    },
+    filter: (input) => parseInt(input, 10) // Ensure ID is an integer
   }
 ]
 
@@ -280,10 +311,27 @@ function addEmployee() {
     .catch(error => console.error('Error:', error));
 }
 
+function updateRole() {
+  inquirer.prompt(roleUpdate)
+    .then((data) => {
+      return fetch(`${apiCall}/api/employees/${data.id}/role`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.table(data);
+      init(); // Re-prompt the main menu after handling the response
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 function updateManager() {
   inquirer.prompt(managerUpdate)
     .then((data) => {
-      return fetch(`${apiCall}/api/employees/${data.id}`, {
+      return fetch(`${apiCall}/api/employees/${data.id}/manager`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
