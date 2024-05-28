@@ -77,12 +77,13 @@ employees.delete('/:id', async (req, res)=>{
 });
 // patch function to update who an employee's manager is. Note patch instead of put as put is for upadating entire row
 employees.patch('/:id', async (req, res) => {
+  const employeeId = parseInt(req.params.id, 10);
+  const { manager_id } = req.body;
   // get's the id for employee being updates from the parameters while the manager id is sent via the body.
   // TODO test if it's possible to reverse the order to make the same changes and seek clarification on which is perfered
-  const employeeId = req.params.id;
-  const { manager_id } = req.body;
+
   // Checks if manager id is either a number or null
-  if (typeof manager_id !== 'number' && manager_id !== null) {
+  if (manager_id !== null && typeof manager_id !== 'number') {
     return res.status(400).json({ error: 'Manager ID must be a number or null' });
   }
 

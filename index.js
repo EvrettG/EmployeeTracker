@@ -111,14 +111,16 @@ const employeeAdd = [
 const managerUpdate = [
   {
     type: 'input',
-    message: 'Please enter the id of the employee you wnat to update',
-    name:'id',
-    validate:  (id) => {
-      if (!isNaN(id)){
+    message: 'Please enter the id of the employee you want to update',
+    name: 'id',
+    validate: (id) => {
+      if (!isNaN(id)) {
         return true;
-      } else{
-        return 'You must enter a number only'
-      }}
+      } else {
+        return 'You must enter a number only';
+      }
+    },
+    filter: (input) => parseInt(input, 10) // Ensure ID is an integer
   },
   {
     type: 'input',
