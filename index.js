@@ -18,8 +18,8 @@ const mainMenu = [
         {name: 'View all employees', value: viewEmployees},
         {name: 'Add Department', value: addDepartment},
         {name: 'Add role', value: addRole},
-        {name: 'Add employee', value:`addEmployee`},
-        {name: 'Update employees manager', value:`updateManager`},
+        {name: 'Add employee', value: addEmployee},
+        {name: 'Update employees manager', value: updateManager},
         {name: 'Delete department', value:deleteDepartment},
         {name: 'Delete role', value:deleteRole},
         {name: 'Delete employee', value: deleteEmpoyee},
@@ -63,6 +63,73 @@ const roleAdd = [
         return true;
       } else{
         return 'You must enter a number only'
+      }
+    }
+  }
+]
+
+const employeeAdd = [
+  {
+    type: 'input',
+    message: 'Please enter the new employee first name',
+    name: 'first_name'
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new employee last name',
+    name: 'last_name'
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new role id for the employee',
+    name: 'role_id',
+    validate:  (role_id) => {
+      if (!isNaN(role_id)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }
+    }
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new manager id for the employee or leave blank if no manager',
+    name: 'manager_id',
+    filter: (input) => input.trim() === '' ? null : input,
+    validate:  (manager_id) => {
+      if (!isNaN(manager_id)){
+        return true;
+      } else if(manager_id === null){
+        return true
+      }else{
+        return 'You must enter a number or leave blanck'
+      }
+    }
+  }
+]
+
+const managerUpdate = [
+  {
+    type: 'input',
+    message: 'Please enter the id of the employee you wnat to update',
+    name:'id',
+    validate:  (id) => {
+      if (!isNaN(id)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }}
+  },
+  {
+    type: 'input',
+    message: 'Please enter the new manager id or leave blank',
+    name: 'manager_id',
+    filter: (input) => input.trim() === '' ? null : parseInt(input, 10),
+    validate: (manager_id) => {
+      if (manager_id === null || !isNaN(manager_id)) {
+        return true;
+      } else {
+        return 'You must enter a number or leave blank';
       }
     }
   }
@@ -178,6 +245,45 @@ function addRole() {
       return fetch(`${apiCall}/api/roles`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.table(data);
+      init(); // Re-prompt the main menu after handling the response
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function addEmployee() {
+  inquirer.prompt(employeeAdd)
+    .then((data) => {
+      // Convert salary and department_id to numbers
+      data.role_id = parseFloat(data.role_id);
+      if (data.manager_id !== null){
+        data.manager_id = parseInt(data.manager_id, 10);
+      };
+      return fetch(`${apiCall}/api/employees`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.table(data);
+      init(); // Re-prompt the main menu after handling the response
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function updateManager() {
+  inquirer.prompt(managerUpdate)
+    .then((data) => {
+      return fetch(`${apiCall}/api/employees/${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
     })
