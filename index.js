@@ -20,9 +20,9 @@ const mainMenu = [
         {name: 'Add role', value: addRole},
         {name: 'Add employee', value:`addEmployee`},
         {name: 'Update employees manager', value:`updateManager`},
-        {name: 'Delete department', value:`deleteDepatment`},
-        {name: 'Delete role', value:`deleteRole`},
-        {name: 'Delete employee', value:`deleteEmpoyee`},
+        {name: 'Delete department', value:deleteDepartment},
+        {name: 'Delete role', value:deleteRole},
+        {name: 'Delete employee', value: deleteEmpoyee},
         {name: 'Quit', value: quit},
         ]
     }
@@ -68,7 +68,47 @@ const roleAdd = [
   }
 ]
 
+const departmentDelete = [
+  {
+    type: 'input',
+    message: 'Please emter the id of the department to delete',
+    name: 'id',
+    validate:  (id) => {
+      if (!isNaN(id)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }
+    }}
+]
 
+const roleDelete = [
+  {
+    type: 'input',
+    message: 'Please emter the id of the role to delete',
+    name: 'id',
+    validate:  (id) => {
+      if (!isNaN(id)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }
+    }}
+]
+
+const employeeDelete = [
+  {
+    type: 'input',
+    message: 'Please emter the id of the employee to delete',
+    name: 'id',
+    validate:  (id) => {
+      if (!isNaN(id)){
+        return true;
+      } else{
+        return 'You must enter a number only'
+      }
+    }}
+]
 
 function viewDepartments(){
   fetch(`${apiCall}/api/departments`, {
@@ -148,6 +188,51 @@ function addRole() {
     })
     .catch(error => console.error('Error:', error));
 }
+
+function deleteDepartment(){
+  inquirer.prompt(departmentDelete).then((data)=>
+  fetch(`${apiCall}/api/departments/${data.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(data => {
+          console.table(data);
+        init(); // Re-prompt the mainMenu after handling the response
+      })
+      .catch(error => console.error('Error:', error)));
+    }
+
+function deleteRole(){
+  inquirer.prompt(roleDelete).then((data)=>
+  fetch(`${apiCall}/api/roles/${data.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(data => {
+          console.table(data);
+        init(); // Re-prompt the mainMenu after handling the response
+      })
+      .catch(error => console.error('Error:', error)));
+    }
+
+function deleteEmpoyee(){
+  inquirer.prompt(employeeDelete).then((data)=>
+  fetch(`${apiCall}/api/employees/${data.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(data => {
+          console.table(data);
+        init(); // Re-prompt the mainMenu after handling the response
+      })
+      .catch(error => console.error('Error:', error)));
+    }
 
 // change name later
 function init(){
